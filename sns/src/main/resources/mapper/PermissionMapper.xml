@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.sns.mapper.PermissionMapper">
+    <resultMap id="BaseResultMap" type="com.demo.sns.entity.Permission">
+        <id column="ID" property="id"></id>
+        <result column="CODE" property="code"></result>
+        <result column="NAME" property="name"></result>
+        <result column="PARENT_CODE" property="parentCode"></result>
+        <result column="TYPE" property="type"></result>
+        <result column="URL" property="url"></result>
+        <result column="DEFAULT_FLAG" property="defaultFlag"></result>
+        <result column="ROLE_CODE" property="roleCode"></result>
+        <result column="DISPLAY" property="display"></result>
+        <result column="CREATE_TIME" property="createTime"></result>
+        <result column="MODIFY_TIME" property="modifyTime"></result>
+    </resultMap>
+    <sql id="baseColumn">
+        ID,CODE,NAME,PARENT_CODE,TYPE,URL,DEFAULT_FLAG,ROLE_CODE,DISPLAY,CREATE_TIME,MODIFY_TIME
+    </sql>
+    <select id="getPermissionByRoleCode" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM PERMISSION
+        WHERE
+        ROLE_CODE>=#{roleCode}
+    </select>
+</mapper>

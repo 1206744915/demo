@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.sns.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.demo.sns.entity.User">
+        <id column="ID" property="id"></id>
+        <result column="USERNAME" property="userName"></result>
+        <result column="PASSWORD" property="password"></result>
+        <result column="PHONENUMBER" property="phoneNumber"></result>
+        <result column="USERID" property="userId"></result>
+        <result column="USERSEX" property="userSex"></result>
+        <result column="EMAIL" property="email"></result>
+        <result column="CLASSID" property="classId"></result>
+        <result column="ROLE_CODE" property="roleCode"></result>
+        <result column="SCHOOL_CODE" property="schoolCode"></result>
+
+    </resultMap>
+    <sql id="baseColumn">
+        ID,USERID,USERNAME,PASSWORD,USERSEX,PHONENUMBER,EMAIL,CLASSID,ROLE_CODE,SCHOOL_CODE
+    </sql>
+    <insert id="addUser">
+        insert
+        USER(ID,USERID,USERNAME,PASSWORD,PHONENUMBER,EMAIL,USERSEX,CLASSID,ROLE_CODE,SCHOOL_CODE)
+        VALUE
+        (
+        UUID(),
+        #{user.userId, jdbcType=VARCHAR},
+        #{user.userName, jdbcType=VARCHAR},
+        #{user.password, jdbcType=VARCHAR},
+        #{user.phoneNumber, jdbcType=VARCHAR},
+        #{user.email, jdbcType=VARCHAR},
+        #{user.userSex, jdbcType = VARCHAR},
+        #{user.classId, jdbcType=VARCHAR},
+        #{user.roleCode, jdbcType = VARCHAR},
+        #{user.schoolCode, jdbcType = VARCHAR}
+        )
+    </insert>
+    <select id="getUser" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM USER
+        WHERE
+        USERID=#{user.userId} and PASSWORD=#{user.password}
+    </select>
+    <select id="getAllUser" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM USER
+        limit #{start},#{end}
+    </select>
+    <select id="getAllUserCount" resultType="int">
+        SELECT
+        count(id)
+        FROM USER
+    </select>
+    <select id="getUserByUserId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM USER
+        WHERE
+        USERID = #{userId}
+    </select>
+    <select id="selectUserByClassId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM USER
+        WHERE
+        CLASSID = #{classId}
+        LIMIT #{start},#{end}
+    </select>
+    <select id="getUserCountByClassId" resultType="int">
+        select count(USERID)
+        from USER
+        WHERE CLASSID=#{classId}
+    </select>
+    <select id="selectAllUser" resultMap="BaseResultMap">
+        select <include refid="baseColumn"/>
+        from USER
+    </select>
+    <delete id="deleteUser">
+       DELETE FROM USER WHERE USERID=#{user.userId}
+    </delete>
+    <update id="updateUserByUserId">
+        update USER
+        SET ONLINE=!ONLINE
+    </update>
+    <update id="updateUser">
+        update USER
+        set
+        USERNAME=#{user.userName,jdbcType=VARCHAR},
+        PASSWORD=#{user.password,jdbcType=VARCHAR},
+        USERSEX = #{user.userSex,jdbcType=VARCHAR},
+        PHONENUMBER = #{user.phoneNumber,jdbcType=VARCHAR},
+        EMAIL = #{user.email,jdbcType=VARCHAR},
+        CLASSID = #{user.classId,jdbcType=VARCHAR},
+        ROLE_CODE = #{user.roleCode, jdbcType=VARCHAR}
+        where USERID = #{user.userId}
+    </update>
+</mapper>

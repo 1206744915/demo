@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.sns.mapper.ClassMapper">
+    <resultMap id="BaseResultMap" type="com.demo.sns.entity.Class">
+        <id column="ID" property="id"></id>
+        <result column="USER_ID" property="userId"></result>
+        <result column="CLASS_ID" property="classId"></result>
+        <result column="CREATE_TIME" property="createTime"></result>
+        <result column="CLASS_NAME" property="className"></result>
+        <result column="USEFUL" property="useful"></result>
+        <result column="SCHOOL_CODE" property="schoolCode"></result>
+    </resultMap>
+    <sql id="baseColumn">
+        ID,USER_ID,CLASS_ID,CREATE_TIME,CLASS_NAME,USEFUL,SCHOOL_CODE
+    </sql>
+    <select id="selectClassByClassId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM CLASS
+        WHERE
+        CLASS_ID = #{classId,jdbcType=VARCHAR}
+        <if test="null != useful and '' != useful">
+            and USEFUL=#{useful,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <select id="selectAllClass" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM CLASS
+        where useful=1
+        ORDER BY CREATE_TIME DESC
+    </select>
+    <select id="selectClassByUserId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM CLASS
+        where USER_ID=#{userId}
+        ORDER BY CREATE_TIME DESC
+        LIMIT #{start},#{end}
+    </select>
+    <insert id="insertClass">
+        insert into CLASS(ID,USER_ID,CLASS_ID,CREATE_TIME,CLASS_NAME,USEFUL,SCHOOL_CODE)
+        value(
+           uuid(),
+           #{c.userId, jdbcType=VARCHAR},
+           #{c.classId, jdbcType=VARCHAR},
+           STR_TO_DATE(#{c.createTime},'%Y-%m-%d %H:%i:%S'),
+           #{c.className, jdbcType=VARCHAR},
+           #{c.useful, jdbcType=VARCHAR},
+           #{c.schoolCode, jdbcType=VARCHAR}
+        )
+    </insert>
+    <update id="updateClass">
+        update CLASS
+        set
+            CLASS_NAME=#{c.className,jdbcType=VARCHAR}
+            where CLASS_ID=#{c.classId}
+    </update>
+    <update id="setClassUseful">
+         update CLASS
+        set
+            USEFUL=#{useful,jdbcType=VARCHAR}
+            where CLASS_ID=#{classId}
+    </update>
+    <select id="selectAllClassByPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM CLASS
+        where useful=1
+        ORDER BY CREATE_TIME DESC
+        LIMIT #{start},#{end}
+    </select>
+    <select id="getClassByUseful" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM CLASS
+        where USEFUL = #{useful}
+        ORDER BY CREATE_TIME DESC
+        LIMIT #{start},#{end}
+    </select>
+    <delete id="deleteClassByClassId">
+        delete from class where CLASS_ID=#{classId}
+    </delete>
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.sns.mapper.TalkingTipMapper">
+    <resultMap id="BaseResultMap" type="com.demo.sns.entity.TalkingTip">
+        <id column="ID" property="id"></id>
+        <result column="USER_ID" property="userId"></result>
+        <result column="TITLE" property="title"></result>
+        <result column="CONTEXT" property="context"></result>
+        <result column="CREATE_TIME" property="createTime"></result>
+    </resultMap>
+    <sql id="baseColumn">
+        ID,USER_ID,TITLE,CREATE_TIME,CONTEXT
+    </sql>
+    <delete id="deleteTalkingTipById">
+        DELETE
+        FROM TALKINGTIP
+        WHERE
+        ID = #{talkingTipId}
+    </delete>
+    <select id="getTalkingTipByUserIddesc" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM TALKINGTIP
+        WHERE
+        USER_ID = #{userId}
+        ORDER BY CREATE_TIME DESC
+    </select>
+    <select id="getAllTalkingTipdesc" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM TALKINGTIP
+        ORDER BY CREATE_TIME DESC
+    </select>
+    <insert id="insertTalkingTip">
+        insert into TALKINGTIP(ID,USER_ID,TITLE,CREATE_TIME,CONTEXT)
+        value(
+           uuid(),
+           #{talkingTip.userId, jdbcType=VARCHAR},
+           #{talkingTip.title, jdbcType=VARCHAR},
+           now(),
+           #{talkingTip.context, jdbcType=VARCHAR}
+        )
+    </insert>
+</mapper>

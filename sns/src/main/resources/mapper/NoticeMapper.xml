@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.sns.mapper.NoticeMapper">
+    <resultMap id="BaseResultMap" type="com.demo.sns.entity.Notice">
+        <id column="ID" property="id"></id>
+        <result column="USER_ID" property="userId"></result>
+        <result column="USER_NAME" property="userName"></result>
+        <result column="CREATE_TIME" property="createTime"></result>
+        <result column="CONTENT" property="content"></result>
+        <result column="CLASS_ID" property="classId"></result>
+        <result column="TYPE" property="type"></result>
+        <result column="SCHOOL_CODE" property="schoolCode"></result>
+    </resultMap>
+    <sql id="baseColumn">
+        ID,USER_ID,USER_NAME,CREATE_TIME,CONTENT,CLASS_ID,TYPE,SCHOOL_CODE
+    </sql>
+    <select id="getNoticeOrderByCreateTimeDESC" resultMap="BaseResultMap">
+        SELECT
+         ID,SCHOOL_CODE,USER_ID,USER_NAME,STR_TO_DATE(DATE_FORMAT(CREATE_TIME, '%Y-%m-%d %H:%i:%s'), '%Y-%m-%d %H:%i:%s') AS CREATE_TIME,CONTENT
+        FROM NOTICE
+        WHERE 1=1
+        <if test="null != classId and '' != classId">
+            and CLASS_ID=#{classId}
+        </if>
+        ORDER BY CREATE_TIME DESC
+         LIMIT #{start},#{end}
+    </select>
+    <select id="getClassNoticeCount" resultType="int">
+        SELECT
+         count(id)
+        FROM NOTICE
+        where CLASS_ID = #{classId}
+    </select>
+    <select id="getSchoolNoticeCount" resultType="int">
+        SELECT
+         count(id)
+        FROM NOTICE
+        where SCHOOL_CODE = #{schoolId}
+    </select>
+    <select id="getNoticeById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM NOTICE
+        WHERE ID = #{id}
+        ORDER BY CREATE_TIME DESC
+    </select>
+    <select id="getSchoolNoticeOrderByCreateTimeDESC" resultMap="BaseResultMap">
+        SELECT
+         ID,USER_ID,USER_NAME,STR_TO_DATE(DATE_FORMAT(CREATE_TIME, '%Y-%m-%d %H:%i:%s'), '%Y-%m-%d %H:%i:%s') AS CREATE_TIME,CONTENT,SCHOOL_CODE
+        FROM NOTICE
+        WHERE school_code = #{schoolId}
+        ORDER BY CREATE_TIME DESC
+        limit #{start},#{end}
+    </select>
+    <select id="getClassNoticeOrderByCreateTimeDESC" resultMap="BaseResultMap">
+       SELECT
+         ID,USER_ID,USER_NAME,STR_TO_DATE(DATE_FORMAT(CREATE_TIME, '%Y-%m-%d %H:%i:%s'), '%Y-%m-%d %H:%i:%s') AS CREATE_TIME,CONTENT,SCHOOL_CODE
+        FROM NOTICE
+        WHERE CLASS_ID = #{classId}
+        ORDER BY CREATE_TIME DESC
+        limit #{start},#{end}
+    </select>
+    <insert id="insertNotice">
+        insert into NOTICE(ID,USER_ID,USER_NAME,CREATE_TIME,CONTENT,TYPE,CLASS_ID)
+        value(
+           uuid(),
+           #{notice.userId, jdbcType=VARCHAR},
+           #{notice.userName, jdbcType=VARCHAR},
+           now(),
+           #{notice.content, jdbcType=VARCHAR},
+           #{notice.type,jdbcType=INTEGER},
+           #{notice.classId,jdbcType=VARCHAR}
+        )
+    </insert>
+</mapper>

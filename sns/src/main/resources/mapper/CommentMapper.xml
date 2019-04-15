@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.sns.mapper.CommentMapper">
+    <resultMap id="BaseResultMap" type="com.demo.sns.entity.Comment">
+        <id column="ID" property="id"></id>
+        <result column="USER_ID" property="userId"></result>
+        <result column="TALKINGTIP_ID" property="talkingTipId"></result>
+        <result column="CREATE_TIME" property="createTime"></result>
+        <result column="CONTEXT" property="context"></result>
+    </resultMap>
+    <sql id="baseColumn">
+        ID,USER_ID,TALKINGTIP_ID,CREATE_TIME,CONTEXT
+    </sql>
+    <select id="getCommentByTalkingTipId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM COMMENT
+        WHERE
+        TALKINGTIP_ID = #{talkingTipId}
+    </select>
+    <insert id="insertComment">
+        insert into COMMENT(ID,USER_ID,TALKINGTIP_ID,CREATE_TIME,CONTEXT)
+        value(
+           uuid(),
+           #{comment.userId, jdbcType=VARCHAR},
+           #{comment.talkingTipId, jdbcType=VARCHAR},
+           now(),
+           #{comment.context, jdbcType=VARCHAR}
+        )
+    </insert>
+</mapper>
